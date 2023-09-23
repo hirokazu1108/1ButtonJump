@@ -17,11 +17,13 @@ public class GameController : MonoBehaviour
 
     [SerializeField] private GameObject playerPrefab;
     private Player player;
-    [SerializeField] private Vector3 spawnPos;
+    [SerializeField] private Vector3[] spawnPos;
 
     public static float gameTime = 0;
 
     public static EndState endState = EndState.NotEnd;
+
+    private int stageNum = 1;
 
     private void Start()
     {
@@ -33,7 +35,7 @@ public class GameController : MonoBehaviour
         yield return uIManager.showCountdown();
 
         //ロボットのスポーン処理
-        var instance = Instantiate(playerPrefab, spawnPos, new Quaternion(0, 180f, 0, 0));
+        var instance = Instantiate(playerPrefab, spawnPos[stageNum], new Quaternion(0, 180f, 0, 0));
         player = instance.GetComponent<Player>();
         player.uIManager = uIManager;
 

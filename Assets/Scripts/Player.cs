@@ -12,17 +12,20 @@ public class Player : MonoBehaviour
 {
     private Animator animator;
     public UIManager uIManager;
-    private float scrollSpeed = 8f;
+    private float scrollSpeed = 7.5f;
     private float jumpPower = 12f;
+    private float boostPower = 20f;
     private float gravityScale = -15f;
     private Rigidbody rb = null;
     private float fuelAmount;
     private const float jumpFuelAmount = 40f;
-    private const float glideFuelAmount = 15f;
+    private const float glideFuelAmount = 8f;
 
     private PlayerState state = PlayerState.Dash;
     private bool isJump = false;
     private bool isDashing = true;    //進むかのフラグ
+
+    private float boostTime = 00;   //ブースト時間
 
     /* ここからプロパティ */
     public float FuelAmount
@@ -32,6 +35,15 @@ public class Player : MonoBehaviour
         {
             fuelAmount = value;
             uIManager.updateUI(UI.FuelBar, value);
+        }
+    }
+    public float BoostTime
+    {
+        get => boostTime;
+        set
+        {
+            boostTime = value;
+            uIManager.updateUI(UI.BoostBar, value);
         }
     }
 
@@ -55,8 +67,16 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        Jump();
-        Glide();
+        //ブーストモード
+        if (BoostTime > 0)
+        {
+            Boost();
+        }
+        else  //通常モード
+        {
+            Jump();
+            Glide();
+        }
     }
 
     private void Jump()
@@ -81,12 +101,41 @@ public class Player : MonoBehaviour
             {
                 animator.SetBool("isGlide", true);
                 FuelAmount -= glideFuelAmount*Time.deltaTime;
-                rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y/1.1f, rb.velocity.z);
+                //rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y/1.1f, rb.velocity.z);
+                rb.AddForce(0, -rb.velocity.y, 0, ForceMode.Acceleration);  //落下速度を計算
             }
         }
         if(!Input.GetKey(KeyCode.Space))
         {
             animator.SetBool("isGlide",false);
+        }
+    }
+
+    private void Boost()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            rb.AddForce(transform.up * boostPower, ForceMode.Impulse);
+            BoostTime -= 20f;
+            animator.SetTrigger("boost");
+        }
+        else
+        {
+            if (rb.velocity.y < 0)
+            {
+                //rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y / 1.f, rb.velocity.z);
+                rb.AddForce(0, -rb.velocity.y*1.2f, 0, ForceMode.Acceleration);  //落下速度を計算
+                BoostTime -= Time.deltaTime;
+                animator.SetBool("isGlide", true);
+            }
+
+        }
+
+        if (BoostTime <= 0)
+        {
+            BoostTime = 0f;
+            FuelAmount = 100f;
+            return;
         }
     }
 
@@ -137,5 +186,9 @@ public class Player : MonoBehaviour
             }
         }
 
+        if (other.gameObject.CompareTag("Drink")){
+            BoostTime = 100f;
+            Destroy(other.gameObject);
+        }
     }
 }

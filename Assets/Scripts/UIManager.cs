@@ -8,6 +8,7 @@ public enum UI
     FuelBar,
     TimerText,
     CountdownText,
+    BoostBar,
 }
 
 public class UIManager : MonoBehaviour
@@ -28,6 +29,9 @@ public class UIManager : MonoBehaviour
                 break;
             case UI.TimerText:
                 timerText.text = Mathf.FloorToInt(value).ToString("##0");
+                break;
+            case UI.BoostBar:
+                fuelSlider.value = value;
                 break;
         }
 

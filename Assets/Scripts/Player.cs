@@ -10,79 +10,132 @@ public enum PlayerState
 }
 public class Player : MonoBehaviour
 {
+    private Animator animator;
     [SerializeField] private GameObject camera;
+    [SerializeField] private UIManager uIManager;
     private float scrollSpeed = 8f;
     private float jumpPower = 12f;
     private float gravityScale = -15f;
-    private float gliderDragScale = 0f;
     private Rigidbody rb = null;
+    private float fuelAmount;
+    private const float jumpFuelAmount = 40f;
+    private const float glideFuelAmount = 15f;
 
     private PlayerState state = PlayerState.Dash;
-    private int jumpCount = 0;
-    private int maxJumpCount = 2;
+    private bool isJump = false;
+    private bool isDashing = true;    //進むかのフラグ
+
+    /* ここからプロパティ */
+    public float FuelAmount
+    {
+        get => fuelAmount;
+        set
+        {
+            fuelAmount = value;
+            uIManager.updateUI(UI.FuelBar, value);
+        }
+    }
+
 
     private void Start()
     {
+        FuelAmount = 100f;
+
+        animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
     }
     private void FixedUpdate()
     {
         camera.transform.position = new Vector3(transform.position.x, transform.position.y + 1, -15f);
-        rb.AddForce(0, gravityScale + gliderDragScale, 0, ForceMode.Acceleration);  //落下速度を計算
-        rb.velocity = new Vector3(scrollSpeed , rb.velocity.y, rb.velocity.z);//x方向移動
+        rb.AddForce(0, gravityScale, 0, ForceMode.Acceleration);  //落下速度を計算
+        if(isDashing) rb.velocity = new Vector3(scrollSpeed , rb.velocity.y, rb.velocity.z);//x方向移動
+        isDashing = true;
 
     }
 
     private void Update()
     {
-
         Jump();
         Glide();
     }
 
     private void Jump()
     {
-        if (jumpCount < maxJumpCount && Input.GetKeyDown(KeyCode.Space))
+
+        if (jumpFuelAmount <= FuelAmount && Input.GetKeyDown(KeyCode.Space))
         {
             Debug.Log("ジャンプ");
             rb.AddForce(transform.up * jumpPower, ForceMode.Impulse);
-            jumpCount++;
+            animator.SetTrigger("jump");
+            FuelAmount -= jumpFuelAmount;
+            isJump = true;
         }
     }
 
     private void Glide()
     {
         //ジャンプ中
-        if (jumpCount>0 && Input.GetKey(KeyCode.Space))
+        if (isJump && Input.GetKey(KeyCode.Space))
         {
-            //rb.drag = 50f;
-            if(rb.velocity.y < 0)
+            if(rb.velocity.y < 0 && FuelAmount >0f)
             {
-                //gliderDragScale = 12f;
-                rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y/1.5f, rb.velocity.z);
+                animator.SetBool("isGlide", true);
+                FuelAmount -= glideFuelAmount*Time.deltaTime;
+                rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y/1.1f, rb.velocity.z);
             }
         }
-        else
+        if(!Input.GetKey(KeyCode.Space))
         {
-            gliderDragScale = 0f;
+            animator.SetBool("isGlide",false);
         }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        //ジャンプ中
-        if (jumpCount > 0)
+        if (this.gameObject.CompareTag("Player"))
         {
-            //床に接所したなら
-            if (collision.gameObject.CompareTag("Floor"))
+            Debug.Log("true");
+        }
+
+        if (collision.gameObject.CompareTag("ToRight"))
+        { 
+            scrollSpeed = Mathf.Abs(scrollSpeed);
+            transform.rotation = new Quaternion(0, 180f, 0, 0);
+        }
+
+        if (collision.gameObject.CompareTag("ToLeft"))
+        {
+            scrollSpeed = -Mathf.Abs(scrollSpeed);
+            transform.rotation = new Quaternion(0, 0, 0, 0);
+        }
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        //壁の淵に当たった時進行を止める処理
+        if (isDashing)
+        {
+            if (collision.gameObject.CompareTag("FloorSide"))
             {
-                jumpCount = 0;
+                isDashing = false;
             }
         }
 
-        if (collision.gameObject.CompareTag("TurnWall")){
-            scrollSpeed = -scrollSpeed;
-            transform.Rotate(new Vector3(0, 180f, 0));
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        Debug.Log("trigger");
+        //ジャンプ中
+        if (isJump)
+        {
+            //床に接所したなら
+            if (other.gameObject.CompareTag("Floor"))
+            {
+                isJump = false;
+                FuelAmount = 100f;
+            }
         }
+
     }
 }

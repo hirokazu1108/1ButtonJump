@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Floor
   - TurnWall
+  - FloorSide
+  - ToLeft
+  - ToRight
   layers:
   - Default
   - TransparentFX

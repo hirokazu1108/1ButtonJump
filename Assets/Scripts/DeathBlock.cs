@@ -7,6 +7,7 @@ public class DeathBlock : MonoBehaviour
     [SerializeField] GameController gameController;
     private void OnCollisionEnter(Collision collision)
     {
-        gameController.finishGame();
+        GameController.endState = EndState.Death;
+        StartCoroutine(gameController.finishGame());
     }
 }

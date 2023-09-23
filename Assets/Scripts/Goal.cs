@@ -15,7 +15,8 @@ public class Goal : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        gameController.finishGame();
+        GameController.endState = EndState.Clear;
+        StartCoroutine(gameController.finishGame());
     }
 
     private void FixedUpdate()

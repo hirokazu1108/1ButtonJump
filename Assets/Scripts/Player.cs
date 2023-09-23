@@ -11,8 +11,7 @@ public enum PlayerState
 public class Player : MonoBehaviour
 {
     private Animator animator;
-    [SerializeField] private GameObject camera;
-    [SerializeField] private UIManager uIManager;
+    public UIManager uIManager;
     private float scrollSpeed = 8f;
     private float jumpPower = 12f;
     private float gravityScale = -15f;
@@ -43,10 +42,11 @@ public class Player : MonoBehaviour
 
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
+        
     }
     private void FixedUpdate()
     {
-        camera.transform.position = new Vector3(transform.position.x, transform.position.y + 1, -15f);
+        Camera.main.transform.position = new Vector3(transform.position.x, transform.position.y + 1, -15f);
         rb.AddForce(0, gravityScale, 0, ForceMode.Acceleration);  //—Ž‰º‘¬“x‚ðŒvŽZ
         if(isDashing) rb.velocity = new Vector3(scrollSpeed , rb.velocity.y, rb.velocity.z);//x•ûŒüˆÚ“®
         isDashing = true;

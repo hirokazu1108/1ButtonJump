@@ -82,7 +82,7 @@ public class Player : MonoBehaviour
 
         if (collision.gameObject.CompareTag("TurnWall")){
             scrollSpeed = -scrollSpeed;
-            Debug.Log(scrollSpeed);
+            transform.Rotate(new Vector3(0, 180f, 0));
         }
     }
 }

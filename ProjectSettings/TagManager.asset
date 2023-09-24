@@ -9,6 +9,8 @@ TagManager:
   - ToLeft
   - ToRight
   - Drink
+  - DeathBlock
+  - Goal
   layers:
   - Default
   - TransparentFX

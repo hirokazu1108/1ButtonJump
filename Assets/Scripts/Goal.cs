@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Goal : MonoBehaviour
 {
-    [SerializeField] GameController gameController;
     private GameObject goalCube;
 
 
@@ -13,11 +12,6 @@ public class Goal : MonoBehaviour
         goalCube = transform.GetChild(0).gameObject;    
     }
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        GameController.endState = EndState.Clear;
-        StartCoroutine(gameController.finishGame());
-    }
 
     private void FixedUpdate()
     {

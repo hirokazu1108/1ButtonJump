@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.1515829, g: 0.15147191, b: 0.19517085, a: 1}
+  m_IndirectSpecularColor: {r: 0.24379471, g: 0.2497297, b: 0.25209993, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -448,7 +448,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Start Game
+  m_Text: Select Stage
 --- !u!222 &1235728135
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -565,7 +565,7 @@ GameObject:
   - component: {fileID: 1843502828}
   - component: {fileID: 1843502831}
   m_Layer: 5
-  m_Name: StartButton
+  m_Name: SelectButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -638,7 +638,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1843502831}
         m_TargetAssemblyTypeName: SceneChange, Assembly-CSharp
-        m_MethodName: ToMainScene
+        m_MethodName: ToSelectScene
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -698,6 +698,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a30c75a7347c194ebaa2236754c535f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  stageManager: {fileID: 0}
 --- !u!1 &1901847980
 GameObject:
   m_ObjectHideFlags: 0

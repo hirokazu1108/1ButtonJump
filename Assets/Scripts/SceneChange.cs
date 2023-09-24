@@ -5,13 +5,20 @@ using UnityEngine.SceneManagement;
 
 public class SceneChange : MonoBehaviour
 {
+    [SerializeField] private StageManager stageManager;
+
     public void ToTitleScene()
     {
         SceneManager.LoadScene("TitleScene");
     }
 
-    public void ToMainScene()
+    public void ToGameScene(int num)
     {
-        SceneManager.LoadScene("MainScene");
+        stageManager.selectStageNum = num;
+        SceneManager.LoadScene("GameScene");
+    }
+    public void ToSelectScene()
+    {
+        SceneManager.LoadScene("StageSelect");
     }
 }

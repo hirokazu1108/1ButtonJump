@@ -12,6 +12,7 @@ public class Player : MonoBehaviour
 {
     private Animator animator;
     public UIManager uIManager;
+    public GameController gameController;
     private float scrollSpeed = 7.5f;
     private float jumpPower = 12f;
     private float boostPower = 20f;
@@ -21,7 +22,6 @@ public class Player : MonoBehaviour
     private const float jumpFuelAmount = 40f;
     private const float glideFuelAmount = 8f;
 
-    private PlayerState state = PlayerState.Dash;
     private bool isJump = false;
     private bool isDashing = true;    //進むかのフラグ
 
@@ -58,6 +58,12 @@ public class Player : MonoBehaviour
     }
     private void FixedUpdate()
     {
+        //動けるかのフラグ
+        if (!GameController.canMove)
+        {
+            return;
+        }
+
         Camera.main.transform.position = new Vector3(transform.position.x, transform.position.y + 1, -15f);
         rb.AddForce(0, gravityScale, 0, ForceMode.Acceleration);  //落下速度を計算
         if(isDashing) rb.velocity = new Vector3(scrollSpeed , rb.velocity.y, rb.velocity.z);//x方向移動
@@ -67,6 +73,12 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+        //動けるかのフラグ
+        if (!GameController.canMove)
+        {
+            return;
+        }
+
         //ブーストモード
         if (BoostTime > 0)
         {
@@ -185,9 +197,29 @@ public class Player : MonoBehaviour
             }
         }
 
-        if (other.gameObject.CompareTag("Drink")){
+        if (other.gameObject.CompareTag("Drink"))
+        {
             BoostTime = 100f;
             Destroy(other.gameObject);
         }
+
+        if (other.gameObject.CompareTag("Goal"))
+        {
+            GameController.endState = EndState.Clear;
+            StartCoroutine(gameController.finishGame());
+        }
+
+        if (other.gameObject.CompareTag("DeathBlock"))
+        {
+            GameController.endState = EndState.Death;
+            StartCoroutine(gameController.finishGame());
+        }
+
+    }
+
+    public void stopMove()
+    {
+        GameController.canMove = false;
+        rb.velocity = Vector3.zero;
     }
 }

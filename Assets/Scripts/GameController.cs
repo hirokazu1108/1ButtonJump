@@ -17,13 +17,13 @@ public class GameController : MonoBehaviour
 
     [SerializeField] private GameObject playerPrefab;
     private Player player;
-    [SerializeField] private Vector3[] spawnPos;
 
     public static float gameTime = 0;
 
     public static EndState endState = EndState.NotEnd;
+    public static bool canMove; //プレイヤーが動けるかのフラグ
 
-    private int stageNum = 1;
+    [SerializeField] private StageManager stageManager; 
 
     private void Start()
     {
@@ -32,15 +32,22 @@ public class GameController : MonoBehaviour
 
     public IEnumerator InitGame()
     {
-        yield return uIManager.showCountdown();
+        canMove = false;
 
+        //ステージ読み込み処理
+        var stage = Instantiate(stageManager.getStageObject());
         //ロボットのスポーン処理
-        var instance = Instantiate(playerPrefab, spawnPos[stageNum], new Quaternion(0, 180f, 0, 0));
-        player = instance.GetComponent<Player>();
+        var p = Instantiate(playerPrefab, stageManager.getSpawnPoint(), new Quaternion(0, 180f, 0, 0));
+        player = p.GetComponent<Player>();
         player.uIManager = uIManager;
+        player.gameController = this;
+        Camera.main.transform.position = new Vector3(p.transform.position.x, p.transform.position.y + 1, -15f);
+
+        yield return uIManager.showCountdown();
 
         gameTime = 120f;
         endState = EndState.NotEnd;
+        canMove = true;
 
         yield break;
     }
@@ -67,6 +74,7 @@ public class GameController : MonoBehaviour
 
     public IEnumerator finishGame()
     {
+        player.stopMove();
         yield return uIManager.showFinish();
         SceneManager.LoadScene("ResultScene");
 

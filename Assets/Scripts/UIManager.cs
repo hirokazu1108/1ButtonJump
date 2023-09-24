@@ -20,17 +20,23 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Animator countdownAnim;
 
     [SerializeField] private GameObject popupPanel;
+    [SerializeField] private GameObject boostImage;
+    [SerializeField] private Image fuelFillArea;    //fuelSlider‚ÌFillArea
 
     public void updateUI(UI ui, float value)
     {
         switch (ui) {
             case UI.FuelBar:
+                boostImage.SetActive(false);
+                fuelFillArea.color = new Color32(146, 155, 255, 255);
                 fuelSlider.value = value;
                 break;
             case UI.TimerText:
                 timerText.text = Mathf.FloorToInt(value).ToString("##0");
                 break;
             case UI.BoostBar:
+                boostImage.SetActive(true);
+                fuelFillArea.color = new Color32(255, 72, 0,255);
                 fuelSlider.value = value;
                 break;
         }

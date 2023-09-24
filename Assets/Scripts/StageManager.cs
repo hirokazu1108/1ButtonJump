@@ -5,7 +5,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "StageManager", menuName = "ScriptableObjects/CreateStageManager")]
 public class StageManager : ScriptableObject
 {
-    public int selectStageNum;
+    public static int stageNum = 2;
+    public static int selectStageNum;
     [SerializeField] GameObject[] stage;
     [SerializeField] Vector3[] spawnPoint;
 

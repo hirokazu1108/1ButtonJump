@@ -11,6 +11,7 @@ TagManager:
   - Drink
   - DeathBlock
   - Goal
+  - Star
   layers:
   - Default
   - TransparentFX

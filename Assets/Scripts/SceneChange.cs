@@ -7,6 +7,10 @@ public class SceneChange : MonoBehaviour
 {
     [SerializeField] private StageManager stageManager;
 
+    public static string getCurrentSceneName()
+    {
+        return SceneManager.GetActiveScene().name;
+    }
     public void ToTitleScene()
     {
         SceneManager.LoadScene("TitleScene");
@@ -14,7 +18,7 @@ public class SceneChange : MonoBehaviour
 
     public void ToGameScene(int num)
     {
-        stageManager.selectStageNum = num;
+        StageManager.selectStageNum = num;
         SceneManager.LoadScene("GameScene");
     }
     public void ToSelectScene()

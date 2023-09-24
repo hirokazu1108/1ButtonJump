@@ -28,6 +28,7 @@ public class Player : MonoBehaviour
 
     private float boostTime = 00;   //ブースト時間
 
+    private Vector3 preVelocity;    //ポーズ前の速度
     /* ここからプロパティ */
     public float FuelAmount
     {
@@ -51,7 +52,9 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
+        var obj = GameObject.Find("AudioManager");
+        if(obj != null) audioManager = obj.GetComponent<AudioManager>();
+
         FuelAmount = 100f;
 
         animator = GetComponent<Animator>();
@@ -60,6 +63,7 @@ public class Player : MonoBehaviour
     }
     private void FixedUpdate()
     {
+
         //動けるかのフラグ
         if (!GameController.canMove)
         {
@@ -75,12 +79,12 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+        
         //動けるかのフラグ
         if (!GameController.canMove)
         {
             return;
         }
-
         //ブーストモード
         if (BoostTime > 0)
         {
@@ -88,6 +92,7 @@ public class Player : MonoBehaviour
         }
         else  //通常モード
         {
+
             Jump();
             Glide();
         }
@@ -95,10 +100,11 @@ public class Player : MonoBehaviour
 
     private void Jump()
     {
-
+        
         if (jumpFuelAmount <= FuelAmount && Input.GetKeyDown(KeyCode.Space))
         {
-            audioManager.playSeOneShot(AudioKinds.SE_Boost);
+            
+            if (audioManager != null) audioManager.playSeOneShot(AudioKinds.SE_Boost);
             Debug.Log("ジャンプ");
             rb.AddForce(transform.up * jumpPower, ForceMode.Impulse);
             animator.SetTrigger("jump");
@@ -112,6 +118,7 @@ public class Player : MonoBehaviour
         //ジャンプ中
         if (isJump && Input.GetKey(KeyCode.Space))
         {
+
             if(rb.velocity.y < 0 && FuelAmount >0f)
             {
                 animator.SetBool("isGlide", true);
@@ -130,7 +137,7 @@ public class Player : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            audioManager.playSeOneShot(AudioKinds.SE_Boost);
+            if (audioManager != null) audioManager.playSeOneShot(AudioKinds.SE_Boost);
             rb.AddForce(transform.up * boostPower, ForceMode.Impulse);
             BoostTime -= 20f;
             animator.SetTrigger("boost");
@@ -203,21 +210,21 @@ public class Player : MonoBehaviour
 
         if (other.gameObject.CompareTag("Drink"))
         {
-            audioManager.playSeOneShot(AudioKinds.SE_Drink);
+            if(audioManager != null) audioManager.playSeOneShot(AudioKinds.SE_Drink);
             BoostTime = 100f;
             Destroy(other.gameObject);
         }
 
         if (other.gameObject.CompareTag("Goal"))
         {
-            audioManager.playSeOneShot(AudioKinds.SE_Goal);
+            if (audioManager != null) audioManager.playSeOneShot(AudioKinds.SE_Goal);
             GameController.endState = EndState.Clear;
             StartCoroutine(gameController.finishGame());
         }
 
         if (other.gameObject.CompareTag("DeathBlock"))
         {
-            audioManager.playSeOneShot(AudioKinds.SE_Death);
+            if (audioManager != null) audioManager.playSeOneShot(AudioKinds.SE_Death);
             GameController.endState = EndState.Death;
             StartCoroutine(gameController.finishGame());
         }
@@ -227,6 +234,13 @@ public class Player : MonoBehaviour
     public void stopMove()
     {
         GameController.canMove = false;
+        preVelocity = rb.velocity;
         rb.velocity = Vector3.zero;
+    }
+
+    public void reMove()
+    {
+        GameController.canMove = true;
+        rb.velocity = preVelocity;
     }
 }

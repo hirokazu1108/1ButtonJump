@@ -8,12 +8,14 @@ public enum AudioKinds
     SE_Goal = 1,    
     SE_Death = 2,
     SE_Drink = 3,
+    SE_Star = 4,
+    SE_Click = 5,
 }
 
 public class AudioManager : MonoBehaviour
 {
-    [SerializeField] AudioSource seAudioSource;
-    [SerializeField] AudioSource bgmAudioSource;
+    public AudioSource seAudioSource;
+    public AudioSource bgmAudioSource;
 
     [SerializeField] AudioClip[] audioClips;
 
@@ -21,8 +23,15 @@ public class AudioManager : MonoBehaviour
 
     private void Start()
     {
-        if(!isSpawned)
-            DontDestroyOnLoad(this.gameObject);
+        int numAudioManager = FindObjectsOfType<AudioManager>().Length;
+        if (numAudioManager > 1)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            DontDestroyOnLoad(gameObject);
+        }
     }
 
     public void playSeOneShot(AudioKinds audioKinds)

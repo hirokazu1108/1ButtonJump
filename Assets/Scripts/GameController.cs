@@ -14,11 +14,14 @@ public enum EndState
 public class GameController : MonoBehaviour
 {
     [SerializeField] private UIManager uIManager;
+    private UserDataManager userDataManager;
 
     [SerializeField] private GameObject playerPrefab;
     private Player player;
 
     public static float gameTime = 0;
+    public static int starNum = 0;
+    public static int maxTime = 120;
 
     public static EndState endState = EndState.NotEnd;
     public static bool canMove; //プレイヤーが動けるかのフラグ
@@ -27,6 +30,7 @@ public class GameController : MonoBehaviour
 
     private void Start()
     {
+        userDataManager = GetComponent<UserDataManager>();
         StartCoroutine(InitGame());
     }
 
@@ -45,7 +49,8 @@ public class GameController : MonoBehaviour
 
         yield return uIManager.showCountdown();
 
-        gameTime = 120f;
+        gameTime = maxTime;
+        starNum = 0;
         endState = EndState.NotEnd;
         canMove = true;
 
@@ -59,7 +64,9 @@ public class GameController : MonoBehaviour
 
     private void GameTimer()
     {
-        if(gameTime >0) gameTime -= Time.deltaTime;
+        if (!canMove) return;
+
+        if (gameTime >0) gameTime -= Time.deltaTime;
 
         //時間切れ
         if (gameTime < 0)
@@ -76,8 +83,13 @@ public class GameController : MonoBehaviour
     {
         player.stopMove();
         yield return uIManager.showFinish();
+        if(endState == EndState.Clear)
+        {
+            userDataManager.Save(StageManager.selectStageNum);
+        }
         SceneManager.LoadScene("ResultScene");
-
         yield break;
     }
+
+
 }

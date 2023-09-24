@@ -23,6 +23,24 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject boostImage;
     [SerializeField] private Image fuelFillArea;    //fuelSlider‚ÌFillArea
 
+    [SerializeField] private GameObject pausePanel;
+
+    private AudioManager audioManager;
+    [SerializeField] private Slider musicSlider;
+    [SerializeField] private Slider seSlider;
+
+    private Player player;
+    [SerializeField] private SceneChange sceneChange;
+
+    private void Start()
+    {
+        var p = GameObject.Find("Player(Clone)");
+        if (p != null) player = p.GetComponent <Player>();
+
+        var a = GameObject.Find("AudioManager");
+        if (a != null) audioManager = a.GetComponent<AudioManager>();
+    }
+
     public void updateUI(UI ui, float value)
     {
         switch (ui) {
@@ -81,5 +99,34 @@ public class UIManager : MonoBehaviour
         yield return new WaitForSeconds(1.5f);
         
         yield break;
+    }
+
+    public void pauseButton()
+    {
+        pausePanel.SetActive(true);
+        if (audioManager != null) musicSlider.value = audioManager.bgmAudioSource.volume;
+        if (audioManager != null) seSlider.value = audioManager.seAudioSource.volume;
+        if (player != null) player.stopMove();
+    }
+
+    public void closePausePanel()
+    {
+        pausePanel.SetActive(false);
+        if (player != null) player.reMove();
+
+    }
+
+    public void reStartButton()
+    {
+        sceneChange.ToGameScene(StageManager.selectStageNum);
+    }
+
+    private void Update()
+    {
+        if (pausePanel.activeSelf)
+        {
+            if(audioManager != null) audioManager.bgmAudioSource.volume = musicSlider.value;
+            if (audioManager != null) audioManager.seAudioSource.volume = seSlider.value;
+        }
     }
 }

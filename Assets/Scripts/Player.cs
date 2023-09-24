@@ -10,6 +10,7 @@ public enum PlayerState
 }
 public class Player : MonoBehaviour
 {
+    private AudioManager audioManager;
     private Animator animator;
     public UIManager uIManager;
     public GameController gameController;
@@ -50,6 +51,7 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
         FuelAmount = 100f;
 
         animator = GetComponent<Animator>();
@@ -96,6 +98,7 @@ public class Player : MonoBehaviour
 
         if (jumpFuelAmount <= FuelAmount && Input.GetKeyDown(KeyCode.Space))
         {
+            audioManager.playSeOneShot(AudioKinds.SE_Boost);
             Debug.Log("ƒWƒƒƒ“ƒv");
             rb.AddForce(transform.up * jumpPower, ForceMode.Impulse);
             animator.SetTrigger("jump");
@@ -127,6 +130,7 @@ public class Player : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
+            audioManager.playSeOneShot(AudioKinds.SE_Boost);
             rb.AddForce(transform.up * boostPower, ForceMode.Impulse);
             BoostTime -= 20f;
             animator.SetTrigger("boost");
@@ -199,18 +203,21 @@ public class Player : MonoBehaviour
 
         if (other.gameObject.CompareTag("Drink"))
         {
+            audioManager.playSeOneShot(AudioKinds.SE_Drink);
             BoostTime = 100f;
             Destroy(other.gameObject);
         }
 
         if (other.gameObject.CompareTag("Goal"))
         {
+            audioManager.playSeOneShot(AudioKinds.SE_Goal);
             GameController.endState = EndState.Clear;
             StartCoroutine(gameController.finishGame());
         }
 
         if (other.gameObject.CompareTag("DeathBlock"))
         {
+            audioManager.playSeOneShot(AudioKinds.SE_Death);
             GameController.endState = EndState.Death;
             StartCoroutine(gameController.finishGame());
         }

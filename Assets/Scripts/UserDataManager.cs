@@ -38,7 +38,7 @@ public class UserDataManager : MonoBehaviour
 
     public void Save(int stageNum = 0)
     {
-        var sum_score = Mathf.FloorToInt(GameController.gameTime * 100 + GameController.starNum * 250);   //総合スコア
+        var sum_score = Mathf.FloorToInt(GameController.gameTime * 25 + GameController.starNum * 1000);   //総合スコア
 
         if (userData.hiScore[stageNum] < sum_score)
         {
@@ -51,6 +51,5 @@ public class UserDataManager : MonoBehaviour
             PlayerPrefs.SetInt($"ClearTime{stageNum}", userData.clearTime[stageNum]);
             PlayerPrefs.SetInt($"StarNum{stageNum}", userData.starNum[stageNum]);
         }
-        
     }
 }

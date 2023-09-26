@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using unityroom.Api;
 
 public class ResultUI : MonoBehaviour
 {
@@ -15,6 +16,8 @@ public class ResultUI : MonoBehaviour
     [SerializeField] private Text scoreText;
     [SerializeField] private Text clearTimeTexts;
     [SerializeField] private Transform starsTransform;
+
+
 
     void Start()
     {
@@ -34,7 +37,10 @@ public class ResultUI : MonoBehaviour
                 failedShow.SetActive(false);
                 endStateText.text = "";
                 var time = Mathf.FloorToInt(GameController.maxTime - GameController.gameTime);
-                var sum_score = Mathf.FloorToInt(GameController.gameTime * 100 + GameController.starNum * 250);   //総合スコア
+                var sum_score = Mathf.FloorToInt(GameController.gameTime * 25 + GameController.starNum * 1000);  //総合スコア
+                var sendNum = StageManager.selectStageNum + 1;
+                var sendData = (float)Mathf.FloorToInt(sum_score);
+                UnityroomApiClient.Instance.SendScore(sendNum, sendData, ScoreboardWriteMode.HighScoreAsc);
                 scoreText.text = sum_score.ToString("00000");
                 clearTimeTexts.text = time + "秒";
                 break;

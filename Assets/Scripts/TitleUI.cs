@@ -9,6 +9,9 @@ public class TitleUI : MonoBehaviour
     [SerializeField] private Slider musicSlider;
     [SerializeField] private Slider seSlider;
     [SerializeField] private GameObject player;
+    [SerializeField] private GameObject introducePanel;
+    private int page = 0;
+    private static bool isFirst = true;
     private Rigidbody rb = null;
 
     float time = 0;
@@ -22,6 +25,12 @@ public class TitleUI : MonoBehaviour
         audioManager = GameObject.FindObjectsOfType<AudioManager>()[0];
         musicSlider.value = audioManager.bgmAudioSource.volume;
         seSlider.value = audioManager.seAudioSource.volume;
+
+        if (isFirst)
+        {
+            IntroduceButton();
+            isFirst = false;
+        }
     }
     private void Update()
     {
@@ -71,6 +80,41 @@ public class TitleUI : MonoBehaviour
     {
         audioManager.seAudioSource.volume = seSlider.value;
     }
+
+    public void IntroduceButton()
+    {
+        introducePanel.SetActive(true);
+        introducePanel.transform.GetChild(0).gameObject.SetActive(false);
+        introducePanel.transform.GetChild(1).gameObject.SetActive(true);
+        introducePanel.transform.GetChild(2).gameObject.SetActive(true);
+        introducePanel.transform.GetChild(3).gameObject.SetActive(false);
+    }
+
+    public void nextButton()
+    {
+        if (page == 0)
+        {
+            page = 1;
+            introducePanel.transform.GetChild(0).gameObject.SetActive(true);
+            introducePanel.transform.GetChild(1).gameObject.SetActive(false);
+            introducePanel.transform.GetChild(2).gameObject.SetActive(true);
+            introducePanel.transform.GetChild(3).gameObject.SetActive(true);
+        }
+        else if (page == 1)
+        {
+            page = 0;
+            introducePanel.SetActive(false);
+        }
+    }
+    public void preButton()
+    {
+        page = 0;
+        introducePanel.transform.GetChild(0).gameObject.SetActive(false);
+        introducePanel.transform.GetChild(1).gameObject.SetActive(true);
+        introducePanel.transform.GetChild(2).gameObject.SetActive(true);
+        introducePanel.transform.GetChild(3).gameObject.SetActive(false);
+    }
+
 
 }
 

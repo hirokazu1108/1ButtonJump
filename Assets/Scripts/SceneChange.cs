@@ -25,4 +25,9 @@ public class SceneChange : MonoBehaviour
     {
         SceneManager.LoadScene("StageSelect");
     }
+
+    public void RetryButton()
+    {
+        SceneManager.LoadScene("GameScene");
+    }
 }

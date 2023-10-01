@@ -5,6 +5,7 @@ using UnityEngine;
 public class UserDataManager : MonoBehaviour
 {
     [SerializeField] UserData userData;
+
     private void Start()
     {
         //PlayerPrefs.DeleteAll();
@@ -33,6 +34,7 @@ public class UserDataManager : MonoBehaviour
                 Debug.Log("ƒf[ƒ^‚ªŒ©‚Â‚©‚è‚Ü‚µ‚½");
             }
         }
+
         
     }
 
